@@ -68,7 +68,7 @@ svg {
     --widget-height: 20px;
     font-size: 15px;
     --input-font-size: 15px;
-    --padding: 10px;
+    --padding: 0px;
     --spacing: 10px;
     --slider-knob-width: 5px;
     --background-color: #0066cc;
@@ -76,7 +76,7 @@ svg {
     --focus-color: rgba(255, 255, 255, .4);
     --hover-color: rgba(255, 255, 255, .5);
     --font-family: monospace;
-    border: 2px solid #0066cc;
+    border: 4px solid #0066cc;
 }
 
 @keyframes float {
@@ -97,15 +97,15 @@ svg {
 .info-popup, .weather-popup, .map-popup {
     position: absolute;
     background: #f0f4f8;
-    padding: 15px; /* Augmentation du padding pour plus d'espace */
+    padding: 10px; /* Augmentation du padding pour plus d'espace */
     border-radius: 50px;
     box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
     transform: translatey(0px);
     animation: float 4s ease-in-out infinite;
-    max-width: 250px; /* Limite la largeur des popups */
+    max-width: 200px; /* Limite la largeur des popups */
     overflow-y: auto; /* Permet le défilement si le contenu dépasse */
-    border: 2px solid #0066cc;
-    text-align: left; /* Centrage du texte */
+    border: 4px solid #0066cc;
+    text-align: center; /* Centrage du texte */
 }
 
 .info-popup img, .weather-popup img, .map-popup img {
@@ -121,22 +121,23 @@ svg {
 .weather-popup {
     bottom: 70px; /* Ajusté pour apparaître au-dessus de la map */
     right: 10px;
-    padding: 20px;
+    padding: 5px;
     background-color: #f0f4f8;
-    border: 2px solid #0066cc;
+    border: 4px solid #0066cc;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    max-width: 300px;
+    max-width: 250px;
+    text-align: center;
 }
 
 .map-popup {
   top: 70px;
   right: 10px;
-  max-width: 250px; /* Réduction de la largeur maximale */
-  max-height: 150px; /* Réduction de la hauteur maximale */
+  max-width: 300px; /* Réduction de la largeur maximale */
+  max-height: 300px; /* Réduction de la hauteur maximale */
   display: none; /* Affiché quand les données de la carte sont récupérées */
   overflow: hidden; /* Masquer la barre de défilement */
-  border: 2px solid #0066cc;
+  border: 4px solid #0066cc;
   background: #f0f4f8;
   border-radius: 10px;
   box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
@@ -168,8 +169,6 @@ svg {
     border-radius: 50%;
     transition: all 1s;
     z-index: 4;
-    box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.4);
-    box-shadow: 0 0 25px 0 #0066cc;
     display: flex;
     justify-content: center;
     align-items: center;
