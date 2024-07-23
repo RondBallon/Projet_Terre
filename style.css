@@ -1,10 +1,12 @@
 @import url('https://fonts.googleapis.com/css?family=Inconsolata:700');
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap');
 
 body {
     padding: 0;
     margin: 0;
     overflow: hidden;
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif; /* Changement de la police de base */
+    background: #c7b6b6;
 }
 
 .page {
@@ -38,7 +40,6 @@ body {
 .info span {
     font-weight: bold;
     text-shadow: 0 0 5px #ffffff;
-    /*background-color: rgba(255, 255, 255, .2);*/
     padding: .2em .6em;
     border-radius: 2px;
     font-size: 2em;
@@ -70,182 +71,192 @@ svg {
     --padding: 10px;
     --spacing: 10px;
     --slider-knob-width: 5px;
-    --background-color: rgba(5, 0, 15, .8);
+    --background-color: #0066cc;
     --widget-color: rgba(255, 255, 255, .3);
     --focus-color: rgba(255, 255, 255, .4);
     --hover-color: rgba(255, 255, 255, .5);
-
     --font-family: monospace;
+    border: 2px solid #0066cc;
+}
+
+@keyframes float {
+    0% {
+        box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+        transform: translatey(0px);
+    }
+    50% {
+        box-shadow: 0 25px 15px 0px rgba(0, 0, 0, 0.2);
+        transform: translatey(-20px);
+    }
+    100% {
+        box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+        transform: translatey(0px);
+    }
+}
+
+.info-popup, .weather-popup, .map-popup {
+    position: absolute;
+    background: #f0f4f8;
+    padding: 15px; /* Augmentation du padding pour plus d'espace */
+    border-radius: 50px;
+    box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+    transform: translatey(0px);
+    animation: float 4s ease-in-out infinite;
+    max-width: 250px; /* Limite la largeur des popups */
+    overflow-y: auto; /* Permet le défilement si le contenu dépasse */
+    border: 2px solid #0066cc;
+    text-align: left; /* Centrage du texte */
+}
+
+.info-popup img, .weather-popup img, .map-popup img {
+    max-width: 100%; /* Empêche les images de déborder */
+    height: auto;
 }
 
 .info-popup {
-    display: none;
-    position: absolute;
-    top: 0%;
-    left: 1%;
-    padding: 20px;
-    background-color: #ecccd2;
-    border: 1px solid #ccc;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    max-width: 300px;
-}
-
-.info-popup h2 {
-    margin-top: 0;
-}
-
-.info-popup img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    margin: 10px 0;
+    top: 50px; /* Ajuste selon besoin */
+    left: 10px; /* Ajuste selon besoin */
 }
 
 .weather-popup {
-    display: flex;
-    position: absolute;
-    top: 15%;
-    left: 80%;
+    bottom: 70px; /* Ajusté pour apparaître au-dessus de la map */
+    right: 10px;
     padding: 20px;
-    background-color: #ecccd2;
-    border: 1px solid #ccc;
+    background-color: #f0f4f8;
+    border: 2px solid #0066cc;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     max-width: 300px;
 }
 
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.map-popup {
+  top: 70px;
+  right: 10px;
+  max-width: 250px; /* Réduction de la largeur maximale */
+  max-height: 150px; /* Réduction de la hauteur maximale */
+  display: none; /* Affiché quand les données de la carte sont récupérées */
+  overflow: hidden; /* Masquer la barre de défilement */
+  border: 2px solid #0066cc;
+  background: #f0f4f8;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+  position: absolute;
 }
 
-html, body {
+.map-popup iframe {
   width: 100%;
   height: 100%;
-}
-
-body {
-  background: #c7b6b6;
+  border: none; /* Supprimer les bordures de l'iframe */
 }
 
 .container {
-  position: absolute;
-  margin: auto;
-  top: 20;
-  left: 10;
-  right: 10;
-  bottom: 0;
-  width: 300px;
-  height: 100px;
-  .search {
     position: absolute;
-    margin: auto;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    top: 0px; /* Positionné juste au-dessus de la Terre */
+    right: 525px;
+    width: 300px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.container .search {
     width: 80px;
     height: 80px;
-    background: #dc143c;
+    background: #0066cc;
     border-radius: 50%;
     transition: all 1s;
     z-index: 4;
     box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.4);
-    box-shadow: 0 0 25px 0 crimson;
-    &:hover {
-      cursor: pointer;
-    }
-    &::before {
-      content: "";
-      position: absolute;
-      margin: auto;
-      top: 22px;
-      right: 0;
-      bottom: 0;
-      left: 22px;
-      width: 12px;
-      height: 2px;
-      background: white;
-      transform: rotate(45deg);
-      transition: all .5s;
-    }
-    &::after {
-      content: "";
-      position: absolute;
-      margin: auto;
-      top: -5px;
-      right: 0;
-      bottom: 0;
-      left: -5px;
-      width: 25px;
-      height: 25px;
-      border-radius: 50%;
-      border: 2px solid white;
-      transition: all .5s;
-    }
-  }
-  input {
+    box-shadow: 0 0 25px 0 #0066cc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container .search:hover {
+    cursor: pointer;
+}
+
+.container .search::before, .container .search::after {
+    content: "";
+    position: absolute;
+    background: white;
+    transition: all 0.5s;
+}
+
+.container .search::before {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid white;
+    background: transparent;
+}
+
+.container .search::after {
+    margin: auto;
+    width: 12px;
+    height: 2px;
+    background: white;
+    transform: rotate(45deg);
+}
+
+.container input {
     font-family: 'Inconsolata', monospace;
     position: absolute;
-    margin: auto;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
     width: 50px;
     height: 50px;
     outline: none;
     border: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    background: crimson;
+    background: #0066cc;
     color: white;
-    text-shadow: 0 0 10px crimson;
+    text-shadow: 0 0 10px #f0f4f8;
     padding: 0 80px 0 20px;
     border-radius: 30px;
-    box-shadow: 0 0 25px 0 crimson,
-                0 20px 25px 0 rgba(0, 0, 0, 0.2);
-    box-shadow: inset 0 0 25px 0 rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 25px 0 #f0f4f8, inset 0 0 25px 0 rgba(0, 0, 0, 0.5);
     transition: all 1s;
     opacity: 0;
     z-index: 5;
     font-weight: bolder;
     letter-spacing: 0.1em;
-    &:hover {
-      cursor: pointer;
-    }
-    &:focus {
-      width: 300px;
-      opacity: 1;
-      cursor: text;
-    }
-    &:focus ~ .search {
-      right: -250px;
-      background: #151515;
-      z-index: 6;
-      &::before {
-        top: 0;
-        left: 0;
-        width: 25px;
-      }
-      &::after {
-        top: 0;
-        left: 0;
-        width: 25px;
-        height: 2px;
-        border: none;
-        background: white;
-        border-radius: 0%;
-        transform: rotate(-45deg);
-      }
-    }
-    &::placeholder {
-      color: white;
-      opacity: 0.5;
-      font-weight: bolder;
-    }
-  }
+}
+
+.container input:hover {
+    cursor: pointer;
+}
+
+.container input:focus {
+    width: 300px;
+    opacity: 1;
+    cursor: text;
+}
+
+.container input:focus ~ .search {
+    right: -250px;
+    background: #0066cc;
+    z-index: 6;
+}
+
+.container input:focus ~ .search::before {
+    width: 25px;
+    height: 25px;
+    border: none;
+}
+
+.container input:focus ~ .search::after {
+    width: 25px;
+    height: 2px;
+    border: none;
+    background: #f0f4f8;
+    border-radius: 0%;
+    transform: rotate(-45deg);
+}
+
+.container input::placeholder {
+    color: #f0f4f8;
+    opacity: 0.5;
+    font-weight: bolder;
 }
 

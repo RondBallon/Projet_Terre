@@ -11,6 +11,7 @@ const countryNameEl = document.querySelector(".info span");
 const infoPopupEl = document.querySelector(".info-popup");
 const placeholderInput = document.querySelector('input[placeholder="On va où ?"]');
 const weatherPopupEl = document.querySelector(".weather-popup");
+const mapPopupEl = document.querySelector('.map-popup');
 
 let renderer, scene, camera, rayCaster, pointer, controls;
 let globeGroup, globeColorMesh, globeStrokesMesh, globeSelectionOuterMesh;
@@ -278,6 +279,25 @@ function createControls() {
         .name("fog distance");
 }
 
+async function fetchMapData(countryName) {
+    const apiKey = '8fbe03b1252043f3b6083ab4cc40ef85';
+    const geoAPIURL = `https://api.geoapify.com/v1/geocode/search?text=${countryName}&apiKey=${apiKey}`;
+
+    try {
+        const response = await fetch(geoAPIURL);
+        if (!response.ok) throw new Error('Geolocation data not found');
+        const geoData = await response.json();
+
+        const { lon, lat } = geoData.features[0].properties;
+        const mapURL = `https://maps.geoapify.com/v1/staticmap?style=osm-bright&width=600&height=400&center=lonlat:${lon},${lat}&zoom=5&apiKey=${apiKey}`;
+        
+        return mapURL;
+    } catch (error) {
+        return `Error fetching map data: ${error.message}`;
+    }
+}
+
+
 // Fonction d'appel de l'API en amont de celle de Country API \\
 async function fetchWeatherData(countryName) {
     const apiKey = '62fa436d5950ece867f81767b004ca78'; // Remplace par ta clé API OpenWeatherMap
@@ -298,7 +318,7 @@ async function fetchWeatherData(countryName) {
 async function fetchCountryData(countryName) {
     const apiURL = "https://restcountries.com/v3.1/name/";
     try {
-      const response = await fetch(`${apiURL}${countryName}?fields=name,flags,capital,currencies,maps`);
+      const response = await fetch(`${apiURL}${countryName}?fields=name,flags,capital,currencies,maps,languages`);
       if (!response.ok) throw new Error('Country not found');
       let data = await response.json();
   
@@ -308,16 +328,30 @@ async function fetchCountryData(countryName) {
       const capital = country.capital[0];
       const googleMapsLink = country.maps.googleMaps;
       const openStreetMapsLink = country.maps.openStreetMaps;
-  
+      const languageText = Object.values(country.languages);
+      const mapURL = await fetchMapData(countryName);
+     
+      
       infoPopupEl.innerHTML = `
         <h2>${country.name.common}</h2>
         <h3>${country.name.official}</h3>
         <p>Capital: ${capital}</p>
         <p>Currency: ${currencyName} (${currencySymbol})</p>
+        <p>${languageText}</p>
         <img src="${country.flags.svg}" alt="${country.name.common} Flag">
         <p><strong>Maps:</strong> <a href="${googleMapsLink}" target="_blank">Google Maps</a>, <a href="${openStreetMapsLink}" target="_blank">OpenStreetMaps</a></p>
       `;
       infoPopupEl.style.display = 'block';
+      
+      if (mapURL) {
+        mapPopupEl.innerHTML = `
+            <img src="${mapURL}" alt="Map of ${countryName}">
+        `;
+        mapPopupEl.style.display = 'block';
+    } else {
+        mapPopupEl.innerHTML = '<p>Unable to load map data</p>';
+        mapPopupEl.style.display = 'block';
+    }
   
       // Fetch API Weather krkrkrkrk 
       
