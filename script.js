@@ -39,6 +39,7 @@ let staticMapUri;
 const bBoxes = [];
 const dataUris = [];
 
+
 initScene();
 createControls();
 window.addEventListener("resize", updateSize);
@@ -55,13 +56,17 @@ function updateMousePosition(eX, eY) {
     pointer.y = -((eY - containerEl.offsetTop) / containerEl.offsetHeight) * 2 + 1;
 }
 
+// Initialisation de la scène 3D avec Three.js
 function initScene() {
+    // Création du renderer WebGL
     renderer = new THREE.WebGLRenderer({ canvas: canvasEl, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
+    // Création de la scène
     scene = new THREE.Scene();
     scene.fog = new THREE.Fog(params.fogColor, 0, params.fogDistance);
 
+    // Création de la caméra
     camera = new THREE.OrthographicCamera(-1.2, 1.2, 1.2, -1.2, 0, 3);
     camera.position.z = 1.3;
 
@@ -72,15 +77,22 @@ function initScene() {
     rayCaster.far = 1.15;
     pointer = new THREE.Vector2(-1, -1);
 
-    createOrbitControls();
-    createGlobe();
-    prepareHiResTextures();
-    prepareLowResTextures();
-    updateSize();
+// contrôles orbitaux
+createOrbitControls();
+// création du globe terrestre
+createGlobe();
+// textures haute résolution
+prepareHiResTextures();
+// textures basse résolution
+prepareLowResTextures();
+// Mise à jour de la taille du renderer/globe 
+updateSize();
 
+    // Ajout du render à la boucle d'animation > on retrouve plus bas pour MAJ Frame
     gsap.ticker.add(render);
 }
 
+// Création des contrôles pour la caméra
 function createOrbitControls() {
     controls = new OrbitControls(camera, canvasEl);
     controls.enablePan = false;
@@ -90,6 +102,7 @@ function createOrbitControls() {
     controls.autoRotate = true;
     controls.autoRotateSpeed *= 1.2;
 
+    // Événements de click/click relaché + arrêt
     controls.addEventListener("start", () => {
         console.log("clic enclenché");
         isHoverable = false;
@@ -116,11 +129,12 @@ function createOrbitControls() {
     });
 }
 
+// Création du globe terrestre
 function createGlobe() {
     const globeGeometry = new THREE.IcosahedronGeometry(1, 20);
 
     const globeColorMaterial = new THREE.MeshBasicMaterial({
-        color: 0x0000ff, // Couleur bleue pour les zones d'eau
+        color: 0x092FF0, // Couleur bleue pour les zones d'eau
         side: THREE.DoubleSide
     });
     const globeStrokeMaterial = new THREE.MeshBasicMaterial({
@@ -132,6 +146,7 @@ function createGlobe() {
         side: THREE.DoubleSide
     });
 
+     // Création des meshes pour le globe
     globeColorMesh = new THREE.Mesh(globeGeometry, globeColorMaterial);
     globeStrokesMesh = new THREE.Mesh(globeGeometry, globeStrokeMaterial);
     globeSelectionOuterMesh = new THREE.Mesh(globeGeometry, outerSelectionColorMaterial);
@@ -141,6 +156,7 @@ function createGlobe() {
     globeGroup.add(globeStrokesMesh, globeSelectionOuterMesh, globeColorMesh);
 }
 
+// Mise à jour de la texture de la carte
 function setMapTexture(material, URI) {
     textureLoader.load(
         URI,
@@ -151,6 +167,7 @@ function setMapTexture(material, URI) {
         });
 }
 
+// textures haute résolution
 function prepareHiResTextures() {
     let svgData;
     gsap.set(svgMapDomEl, {
@@ -167,6 +184,7 @@ function prepareHiResTextures() {
     staticMapUri = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgData);
     setMapTexture(globeColorMesh.material, staticMapUri);
 
+   // AFFICHE LES NOMS DES TERTER
     gsap.set(svgMapDomEl, {
         attr: {
             "fill": "none",
@@ -179,6 +197,7 @@ function prepareHiResTextures() {
     countryNameEl.innerHTML = svgCountries[hoveredCountryIdx].getAttribute("data-name");
 }
 
+// textures basse résolution
 function prepareLowResTextures() {
     gsap.set(svgCountryDomEl, {
         attr: {
@@ -202,7 +221,7 @@ function prepareLowResTextures() {
     setMapTexture(globeSelectionOuterMesh.material, dataUris[hoveredCountryIdx]);
 }
 
-
+// Mise à jour de la carte en fonction de la position
 function updateMap(uv = { x: 0, y: 0 }) {
     const pointObj = svgMapDomEl.createSVGPoint();
     pointObj.x = uv.x * svgViewBox[0];
@@ -229,6 +248,7 @@ function updateMap(uv = { x: 0, y: 0 }) {
     }
 }
 
+// Appel du render pour chaque frame 
 function render() {
     controls.update();
 
@@ -247,6 +267,7 @@ function render() {
     renderer.render(scene, camera);
 }
 
+// Function pour le scaling -
 function updateSize() {
     const side = Math.min(500, Math.min(window.innerWidth, window.innerHeight) - 50);
     containerEl.style.width = side + "px";
@@ -254,6 +275,7 @@ function updateSize() {
     renderer.setSize(side, side);
 }
 
+// Function pour créer les controles IU
 function createControls() {
     const gui = new GUI();
     gui.close();
@@ -290,8 +312,7 @@ async function fetchMapData(countryName) {
 
         const { lon, lat } = geoData.features[0].properties;
         const mapURL = `https://maps.geoapify.com/v1/staticmap?style=osm-bright&width=600&height=400&center=lonlat:${lon},${lat}&zoom=5&apiKey=${apiKey}`;
-        
-        return mapURL;
+        return mapURL;    
     } catch (error) {
         return `Error fetching map data: ${error.message}`;
     }
@@ -299,6 +320,7 @@ async function fetchMapData(countryName) {
 
 
 // Fonction d'appel de l'API en amont de celle de Country API \\
+
 async function fetchWeatherData(countryName) {
     const apiKey = '62fa436d5950ece867f81767b004ca78'; // Remplace par ta clé API OpenWeatherMap
     const apiURL = `https://api.openweathermap.org/data/2.5/weather?q=${countryName}&appid=${apiKey}&units=metric`;
@@ -314,6 +336,7 @@ async function fetchWeatherData(countryName) {
     }
   }
 
+// La boss \\
 
 async function fetchCountryData(countryName) {
     const apiURL = "https://restcountries.com/v3.1/name/";
@@ -353,7 +376,7 @@ async function fetchCountryData(countryName) {
         mapPopupEl.style.display = 'block';
     }
   
-      // Fetch API Weather krkrkrkrk 
+      // API Weather krkrkrkrk 
       
       const weatherData = await fetchWeatherData(countryName);
       document.getElementById('weather-data').innerText = weatherData;

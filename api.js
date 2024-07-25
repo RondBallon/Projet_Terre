@@ -242,4 +242,27 @@ let languageText = "";
             }
           }
         }
+
+
+        async function fetchMapData(countryName) {
+            const apiKey = '8fbe03b1252043f3b6083ab4cc40ef85';
+            const geoAPIURL = `https://api.geoapify.com/v1/geocode/search?text=${countryName}&apiKey=${apiKey}`;
         
+            try {
+                const response = await fetch(geoAPIURL);
+                if (!response.ok) throw new Error('Geolocation data not found');
+                const geoData = await response.json();
+        
+                const { lon, lat } = geoData.features[0].properties;
+                const mapURL = `https://maps.geoapify.com/v1/staticmap?style=osm-bright&width=600&height=400&center=lonlat:${lon},${lat}&zoom=5&apiKey=${apiKey}`;
+                
+                return mapURL;
+            } catch (error) {
+                return `Error fetching map data: ${error.message}`;
+            }
+        }
+
+
+        `https://maps.geoapify.com/v1/tile/carto/{z}/{x}/{y}.png?style=osm-bright&width=600&height=400&center=lonlat:${lon},${lat}&zoom=5&apiKey=${apiKey}`;
+        return mapURL;
+        https://api.geoapify.com/v1/geocode/search?text=${countryName}&apiKey=${apiKey}`;https://maps.geoapify.com/v1/staticmap?style=osm-bright&width=600&height=400&center=lonlat:${lon},${lat}&zoom=5&apiKey=${apiKey}`;
